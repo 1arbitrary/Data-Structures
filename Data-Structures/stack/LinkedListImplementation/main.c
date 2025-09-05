@@ -40,14 +40,10 @@ printList (struct Node* current)
 static void
 deleteNode (struct Node** current)
 {
-        // declared a new temporary node and i assigned it the current value of head_ptr.
         struct Node* tempNode = *current;
-        // In the next line i overwrite the value of current with the value of the next node in the
-        // list.
 
         puts ("Deleting Node .....");
         *current = (*current)->next;
-        // Now I simply free the old head
         free (tempNode);
         tempNode = NULL;
 }
@@ -58,11 +54,8 @@ freeSpace (struct Node* current)
         struct Node* temp_var = NULL;
         while (current != NULL)
                 {
-                        /* So temp_var stores a copy of the address of the current */
                         temp_var = current;
                         current = current->next;
-                        /* Freeing even the copy of the address results in freeing the address
-                        altogether. */
                         free (temp_var);
                 }
 }
