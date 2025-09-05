@@ -11,7 +11,7 @@ static void
 pushNode (struct Node** head_ptr, int data)
 {
         struct Node* current = malloc (sizeof (struct Node));
-        if (head_ptr != NULL)
+        if (*head_ptr != NULL)
                 {
                         current->data = data;
                         current->next = *head_ptr;
