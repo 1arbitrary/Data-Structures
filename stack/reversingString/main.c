@@ -1,7 +1,6 @@
 #include <stdio.h>
 
-static void
-print_string_recursively (char *current_arr)
+static void inline print_string_recursively (char *current_arr)
 {
       if ((*current_arr) != '\0')
             {
@@ -10,13 +9,12 @@ print_string_recursively (char *current_arr)
             }
 }
 
-static void
-reverse_string_recursively (char *current_array)
+static void inline reverse_string_recursively (char *current_array)
 {
       if ((*current_array) != '\0')
             {
                   reverse_string_recursively (current_array + 1);
-		  printf("%c", *current_array);
+                  printf ("%c", *current_array);
             }
 }
 
@@ -31,6 +29,6 @@ main (void)
 
       reverse_string_recursively (helloArr);
       puts ("");
-      
+
       return 0;
 }
