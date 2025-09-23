@@ -27,7 +27,7 @@ static void Pop(stack *working_structure) {
         puts("");
 }
 
-static inline int Top(stack *working_structure) {
+inline static int Top(stack *working_structure) {
         return working_structure->arr[working_structure->top];
 }
 
