@@ -1,4 +1,3 @@
-// Trace the working of this C program ---------------------------------
 #include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
@@ -14,7 +13,6 @@ typedef struct
 static bool
 is_full (stack *current_structure)
 {
-      // To check the space left in the array. Should return `false` ideally.
       return (current_structure->top >= (MAX_SIZE - 1));
 }
 
@@ -28,16 +26,17 @@ Push (stack *current_structure, char data)
             }
       else
             {
-                  // Increment top before inserting so that there is no data loss.
-                  current_structure->top++;
-                  current_structure->character_array[current_structure->top] = data;
+                  if (data != '\n')
+                        {
+                              current_structure->top++;
+                              current_structure->character_array[current_structure->top] = data;
+                        }
             }
 }
 
 static bool
 is_empty (stack *current_structure)
 {
-      // This is just to check if i'm popping an empty array otherwise this isn't really useful.
       return (current_structure->top < 0);
 }
 
@@ -62,11 +61,7 @@ reversing_string (stack *current_structure)
       if (!is_empty (current_structure))
             {
                   char foo_array[MAX_SIZE] = {};
-
-                  // The reason because i've set the size_t n to top + 1 is because it would also
-                  // require a null terminating character
-                  memcpy (foo_array, current_structure->character_array,
-                          current_structure->top + 1);
+                  strcpy (foo_array, current_structure->character_array);
 
                   int i = current_structure->top;
                   current_structure->top = -1;
@@ -76,6 +71,7 @@ reversing_string (stack *current_structure)
                               Push (current_structure, foo_array[i]);
                               i--;
                         }
+                  current_structure->character_array[current_structure->top + 1] = '\0';
             }
       else
             {
@@ -87,43 +83,26 @@ reversing_string (stack *current_structure)
 void
 Print (stack *current_structure)
 {
-      printf ("%s", current_structure->character_array);
+      printf ("Reversed String : %s\n", current_structure->character_array);
 }
 
 static void
 init (void)
 {
-      // Initializing a local struct variable;
       stack current_structure = { .top = -1 };
-
-      // A sample array to store input
       char input_array[MAX_SIZE] = {};
 
       puts ("Input a String: ");
-
-      // To store input and not ignore spaces; unlike `scanf`.
       fgets (input_array, MAX_SIZE, stdin);
 
+      int input_size = strnlen (input_array, MAX_SIZE);
       int i = 0;
-      // Loop to iterate through the stored input array and push the elements one by one from the
-      // beginning.
-      while (input_array[i] != '\0')
+
+      while (i < input_size)
             {
-                  // To push only the elements which are non '\n' characters
-                  if (input_array[i] != '\n')
-                        {
-                              Push (&current_structure, input_array[i]);
-                              i++;
-                        }
-                  else
-                        {
-                              // Remember to increment the value of `i` before writing continue,
-                              // otherwise it will be stuck in an infinte loop.
-                              i++;
-                              continue;
-                        }
+                  Push (&current_structure, input_array[i]);
+                  i++;
             }
-      // Calling the reversing string function
       reversing_string (&current_structure);
       Print (&current_structure);
 }
