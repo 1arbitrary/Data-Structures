@@ -45,8 +45,11 @@ Pop (stack *current_structure)
 {
       if (!(is_empty (current_structure)))
             {
-                  current_structure->top--;
-                  return;
+                  while (current_structure->top >= 0)
+                        {
+                              current_structure->top--;
+                        }
+		  puts("List successfully Popped");
             }
       else
             {
@@ -64,7 +67,7 @@ reversing_string (stack *current_structure)
                   strcpy (foo_array, current_structure->character_array);
 
                   int i = current_structure->top;
-                  current_structure->top = -1;
+                  Pop (current_structure);
 
                   while (i >= 0)
                         {
