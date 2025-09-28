@@ -84,6 +84,7 @@ void
 Print (stack *current_structure)
 {
       printf ("Reversed String : %s\n", current_structure->character_array);
+      fflush (stdout);
 }
 
 static void
