@@ -8,7 +8,6 @@ typedef struct {
 } stack;
 
 static bool isFull(stack *working_structure) { return working_structure->top == (MAX_SIZE - 1); }
-
 static bool isEmpty(stack *working_structure) { return working_structure->top < 0; }
 
 static void Push(int data, stack *working_structure) {
@@ -30,6 +29,7 @@ static void Pop(stack *working_structure) {
                 working_structure->top--;
         }
 }
+
 static int Top(stack *working_structure) {
         if (!isEmpty(working_structure)) {
                 return working_structure->arr[working_structure->top];
