@@ -41,11 +41,16 @@ static void
 deleteNode (struct Node** current)
 {
         struct Node* tempNode = *current;
-
-        puts ("Deleting Node .....");
-        *current = (*current)->next;
-        free (tempNode);
-        tempNode = NULL;
+        if (tempNode != NULL)
+                {
+                        puts ("Deleting Node .....");
+                        *current = (*current)->next;
+                        free (tempNode);
+                }
+        else
+                {
+		  puts("HEAD NODE DOESN'T EXIST !");
+	}
 }
 
 static void
