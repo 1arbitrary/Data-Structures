@@ -1,0 +1,6 @@
+BasedOnStyle: GNU
+IndentWidth: 2
+Language: CPP
+DerivePointerAlignment: true
+PointerAlignment: Right
+ColumnLimit: 100
