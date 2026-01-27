@@ -49,7 +49,7 @@ Pop (stack *current_structure)
                         {
                               current_structure->top--;
                         }
-		  puts("List successfully Popped");
+                  puts ("List successfully Popped");
             }
       else
             {
