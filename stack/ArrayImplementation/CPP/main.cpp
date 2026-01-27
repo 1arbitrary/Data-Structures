@@ -44,9 +44,8 @@ public:
   }
 };
 
-int main(void) {
-  Stack s;
 
+void init(Stack &s) {
   s.push(10);
   s.push(20);
   s.push(30);
@@ -71,6 +70,10 @@ int main(void) {
   s.push(600);
 
   s.print();
+}
 
+int main(void) {
+  Stack s;
+  init(s);
   return 0;
 }
