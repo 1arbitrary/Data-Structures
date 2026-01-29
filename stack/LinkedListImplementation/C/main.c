@@ -3,91 +3,91 @@
 
 struct Node
 {
-        int data;
-        struct Node* next;
+  int data;
+  struct Node* next;
 };
 
 static void
-pushNode (struct Node** head_ptr, int data)
+push (struct Node** head_ptr, int data)
 {
-        struct Node* current = malloc (sizeof (struct Node));
-        if (*head_ptr != NULL)
-                {
-                        current->data = data;
-                        current->next = *head_ptr;
-                        *head_ptr = current;
-                }
-        else
-                {
-                        current->data = data;
-                        current->next = NULL;
-                        *head_ptr = current;
-                }
+  struct Node* current = malloc (sizeof (struct Node));
+  if (*head_ptr != NULL)
+    {
+      current->data = data;
+      current->next = *head_ptr;
+      *head_ptr = current;
+    }
+  else
+    {
+      current->data = data;
+      current->next = NULL;
+      *head_ptr = current;
+    }
 }
 
 static void
-printList (struct Node* current)
+print (struct Node* current)
 {
-        printf ("List : ");
-        while (current != NULL)
-                {
-                        printf ("%d ", current->data);
-                        current = current->next;
-                }
-        puts ("");
+  printf ("List : ");
+  while (current != NULL)
+    {
+      printf ("%d ", current->data);
+      current = current->next;
+    }
+  puts ("");
 }
 
 static void
-deleteNode (struct Node** current)
+pop (struct Node** current)
 {
-        struct Node* tempNode = *current;
-        if (tempNode != NULL)
-                {
-                        puts ("Deleting Node .....");
-                        *current = (*current)->next;
-                        free (tempNode);
-                }
-        else
-                {
-		  puts("HEAD NODE DOESN'T EXIST !");
-	}
+  struct Node* tempNode = *current;
+  if (tempNode != NULL)
+    {
+      puts ("Deleting Node .....");
+      *current = (*current)->next;
+      free (tempNode);
+    }
+  else
+    {
+      puts ("HEAD NODE DOESN'T EXIST !");
+    }
 }
 
 static void
 freeSpace (struct Node* current)
 {
-        struct Node* temp_var = NULL;
-        while (current != NULL)
-                {
-                        temp_var = current;
-                        current = current->next;
-                        free (temp_var);
-                }
+  struct Node* temp_var = NULL;
+  while (current != NULL)
+    {
+      temp_var = current;
+      current = current->next;
+      free (temp_var);
+    }
 }
 
 int
 main (void)
 {
-        struct Node* head = NULL;
+  struct Node* head = NULL;
 
-        pushNode (&head, 2);
-        printList (head);
+  push (&head, 2);
+  print (head);
 
-        pushNode (&head, 3);
-        printList (head);
+  push (&head, 3);
+  print (head);
 
-        pushNode (&head, 4);
-        printList (head);
+  push (&head, 4);
+  print (head);
 
-        pushNode (&head, 5);
-        printList (head);
+  push (&head, 5);
+  print (head);
 
-        pushNode (&head, 6);
-        printList (head);
+  push (&head, 6);
+  print (head);
 
-        deleteNode (&head);
-        printList (head);
+  pop (&head);
+  print (head);
 
-        freeSpace (head);
-        return 0;
+  freeSpace (head);
+  return 0;
 }
