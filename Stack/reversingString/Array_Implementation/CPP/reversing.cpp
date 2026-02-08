@@ -68,15 +68,7 @@ template <typename T> struct Stack
   {
     if (!isEmpty ())
       {
-        T temp_arr[MAX_SIZE] = {};
-        int i{ top };
-        int j{ 0 };
-        while (i >= 0)
-          {
-            temp_arr[j++] = elements[i--];
-          }
-        // copies temp_arr to elements_array
-        std::copy (std::begin (temp_arr), std::begin(temp_arr) + (top + 1) , std::begin (elements));
+	// tbd
       }
     else
       {
