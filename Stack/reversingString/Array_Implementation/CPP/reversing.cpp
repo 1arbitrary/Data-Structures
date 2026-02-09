@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iterator>
 #include <stdexcept>
 #define MAX_SIZE 101
 
@@ -30,7 +29,6 @@ template <typename T> struct Stack
   {
     if (!isFull ())
       {
-        std::clog << "Adding Element : " << data << "\n";
         elements[++top] = data;
       }
     else
@@ -39,17 +37,17 @@ template <typename T> struct Stack
       }
   }
 
-  void
+  T
   pop ()
   {
     if (!isEmpty ())
       {
-        std::clog << "Popping element : " << elements[top] << "\n";
-        --top;
+        return elements[top--];
       }
     else
       {
         std::cerr << "Attempt to pop an empty Stack !" << "\n";
+        throw std::out_of_range ("empty list");
       }
   }
 
@@ -68,22 +66,34 @@ template <typename T> struct Stack
   {
     if (!isEmpty ())
       {
-	// tbd
+        T result_arr[MAX_SIZE] = {};
+        int i{ 0 };
+        while (top > -1)
+          {
+            T temp = pop ();
+            result_arr[i++] = temp;
+          }
+
+        int j{ 0 };
+        while (j <= i - 1)
+          {
+            push (result_arr[j++]);
+          }
       }
     else
       {
-        std::cerr << "Trying to reverse an empty stack" << "\n";
+        throw std::out_of_range ("Attempt To Reverse An Empty Stack ");
       }
   }
 
   void
   print () const
   {
-    int i{ top };
+    int i{ 0 };
     std::cout << "Stack : ";
-    while (i >= 0)
+    while (i <= top)
       {
-        std::cout << elements[i--] << "\t";
+        std::cout << elements[i++] << "\t";
       }
     std::cout << "\n";
   }
