@@ -7,6 +7,8 @@ struct Stack {
   int operands[MAX_SIZE];
 
   Stack() = default;
+  ~Stack() { print_result(); }
+
   Stack(const Stack &) = delete;
   Stack &operator=(const Stack &) = delete;
 
@@ -65,7 +67,6 @@ struct Stack {
         continue;
       }
     }
-    print_result();
   }
 };
 
