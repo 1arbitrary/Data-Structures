@@ -74,7 +74,7 @@ template <typename T> struct Queue
         return;
       }
 
-    int i{ front };
+    std::size_t i{ front };
     std::size_t elements_left_to_print{ occupied_indexes };
 
     while (elements_left_to_print != 0)
