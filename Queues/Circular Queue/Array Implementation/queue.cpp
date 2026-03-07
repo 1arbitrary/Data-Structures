@@ -79,12 +79,9 @@ template <typename T> struct Queue
 
     while (elements_left_to_print != 0)
       {
-        std::cout << elements[i++] << '\t';
+        std::cout << elements[i] << '\t';
         elements_left_to_print--;
-        if (i == MAX_SIZE)
-          {
-            i = 0;
-          }
+        i = (i + 1) % MAX_SIZE;
       }
     std::cout << '\n';
   }
