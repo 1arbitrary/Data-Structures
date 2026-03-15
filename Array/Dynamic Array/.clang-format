@@ -1,0 +1,8 @@
+BasedOnStyle: GNU
+IndentWidth: 2
+Language: Cpp
+DerivePointerAlignment: true
+PointerAlignment: false
+AllowShortFunctionsOnASingleLine: Empty
+SortIncludes: true
+ColumnLimit: 100
