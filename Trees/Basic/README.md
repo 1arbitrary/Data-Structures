@@ -4,7 +4,7 @@
 - In my implementation, I have used BFS for locating insert position.
 > Scanning for empty nodes from left to right ensuring that first available position in level-order is always filled.
 
-# Why Is A Queue Required For Insertion in Binary Tree ?
+# Why Is A Queue Required ?
 
 - A Queue Preserves Processing Order.
 - Traversal starts from the root node and expands level-by-level in order. Nodes discovered are enqueued in that order.
