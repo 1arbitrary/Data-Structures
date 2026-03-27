@@ -179,6 +179,82 @@ template <typename T> struct BinaryTree
       }
     std::cout << '\n';
   }
+
+  std::size_t
+  total_nodes_helper (const Node<T> *node) const
+  {
+    if (node == nullptr)
+      {
+        return 0;
+      }
+
+    std::size_t nodes_on_left = total_nodes_helper (node->left);
+    std::size_t nodes_on_right = total_nodes_helper (node->right);
+
+    return 1 + nodes_on_left + nodes_on_right;
+  }
+
+  std::size_t
+  total_nodes () const
+  {
+    if (is_empty ())
+      {
+        return 0;
+      }
+
+    return total_nodes_helper (root_node);
+  }
+
+  int
+  sum_of_nodes_helper (const Node<T> *node) const
+  {
+    if (node == nullptr)
+      {
+        return 0;
+      }
+
+    int left_sum = sum_of_nodes_helper (node->left);
+    int right_sum = sum_of_nodes_helper (node->right);
+
+    return node->value + left_sum + right_sum;
+  }
+
+  int
+  sum_of_nodes () const
+  {
+    if (is_empty ())
+      {
+        return 0;
+      }
+    return sum_of_nodes_helper (root_node);
+  }
+
+  std::size_t
+  count_leaf_nodes_helper (const Node<T> *node) const
+  {
+    if (node == nullptr)
+      {
+        return 0;
+      }
+
+    std::size_t left_leaf_nodes = count_leaf_nodes_helper (node->left);
+    std::size_t right_leaf_nodes = count_leaf_nodes_helper (node->right);
+
+    return (node->right == nullptr && node->left == nullptr)
+               ? (1 + left_leaf_nodes + right_leaf_nodes)
+               : left_leaf_nodes + right_leaf_nodes;
+  }
+
+  std::size_t
+  count_leaf_nodes () const
+  {
+    if (is_empty ())
+      {
+        return 0;
+      }
+    return count_leaf_nodes_helper (root_node);
+  }
+  
 };
 
 int
@@ -193,6 +269,8 @@ main (void)
 
   std::cout << "Tree Height(BFS) : " << t.height_bfs ();
   std::cout << '\n' << "Tree Height (DFS) : " << t.height_dfs ();
-
+  std::cout << '\n' << "Total Nodes : " << t.total_nodes ();
+  std::cout << '\n' << "Sum of Nodes : " << t.sum_of_nodes ();
+  std::cout << '\n' << "No. of Leaf Nodes : " << t.count_leaf_nodes ();
   return 0;
 }
