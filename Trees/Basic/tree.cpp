@@ -151,10 +151,10 @@ template <typename T> struct BinaryTree
   void
   print () const
   {
-    std::cout << "Binary Tree : ";
+    std::cout << "Binary Tree : " << '\n' << '\n';
     if (is_empty ())
       {
-        std::cout << "Empty Binary Tree!" << '\n';
+        std::cout << "Empty Binary Tree !" << '\n';
         return;
       }
 
@@ -163,21 +163,25 @@ template <typename T> struct BinaryTree
 
     while (!printingQueue.empty ())
       {
-        Node<T> *front_node = printingQueue.front ();
-        if (front_node->left != nullptr)
+        std::size_t pops = printingQueue.size ();
+        while (pops > 0)
           {
-            printingQueue.push (front_node->left);
-          }
+            Node<T> *front_node = printingQueue.front ();
+            if (front_node->left != nullptr)
+              {
+                printingQueue.push (front_node->left);
+              }
+            if (front_node->right != nullptr)
+              {
+                printingQueue.push (front_node->right);
+              }
 
-        if (front_node->right != nullptr)
-          {
-            printingQueue.push (front_node->right);
+            std::cout << front_node->value << '\t';
+            printingQueue.pop ();
+            pops--;
           }
-
-        std::cout << front_node->value << '\t';
-        printingQueue.pop ();
+        std::cout << '\n' << '\n';
       }
-    std::cout << '\n';
   }
 
   std::size_t
