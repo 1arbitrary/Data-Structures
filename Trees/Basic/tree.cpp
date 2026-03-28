@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <ios>
 #include <iostream>
 #include <queue>
 
@@ -148,6 +149,36 @@ template <typename T> struct BinaryTree
     return height_dfs_helper (root_node);
   }
 
+  bool
+  search_helper (Node<T> *current_node, T value)
+  {
+    if (current_node == nullptr)
+      {
+        return false;
+      }
+
+    if (current_node->value == value)
+      {
+        return true;
+      }
+
+    bool left = search_helper (current_node->left, value);
+    bool right = search_helper (current_node->right, value);
+
+    return left || right;
+  }
+
+  bool
+  search (T value)
+  {
+    if (is_empty ())
+      {
+        std::cerr << "Not Found ! Empty Tree" << '\n';
+        return false;
+      }
+    return search_helper (root_node, value);
+  }  
+
   void
   print () const
   {
@@ -276,5 +307,7 @@ main (void)
   std::cout << '\n' << "Total Nodes : " << t.total_nodes ();
   std::cout << '\n' << "Sum of Nodes : " << t.sum_of_nodes ();
   std::cout << '\n' << "No. of Leaf Nodes : " << t.count_leaf_nodes ();
+  std::cout << "\nSearch " << 22  << " : " << std::boolalpha << t.search (22) << std::noboolalpha << '\n';
+  std::cout << "Search " << 40 << " : " << std::boolalpha << t.search(40) << std::noboolalpha << '\n';  
   return 0;
 }
