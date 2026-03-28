@@ -150,7 +150,7 @@ template <typename T> struct BinaryTree
   }
 
   bool
-  search_helper (Node<T> *current_node, T value)
+  search_helper (Node<T> *current_node, T value) const 
   {
     if (current_node == nullptr)
       {
@@ -169,7 +169,7 @@ template <typename T> struct BinaryTree
   }
 
   bool
-  search (T value)
+  search (T value) const
   {
     if (is_empty ())
       {
@@ -309,5 +309,6 @@ main (void)
   std::cout << '\n' << "No. of Leaf Nodes : " << t.count_leaf_nodes ();
   std::cout << "\nSearch " << 22  << " : " << std::boolalpha << t.search (22) << std::noboolalpha << '\n';
   std::cout << "Search " << 40 << " : " << std::boolalpha << t.search(40) << std::noboolalpha << '\n';  
+
   return 0;
 }
