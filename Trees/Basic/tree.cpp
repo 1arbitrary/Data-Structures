@@ -150,7 +150,7 @@ template <typename T> struct BinaryTree
   }
 
   bool
-  search_helper (Node<T> *current_node, T value) const 
+  search_helper (Node<T> *current_node, T value) const
   {
     if (current_node == nullptr)
       {
@@ -162,10 +162,7 @@ template <typename T> struct BinaryTree
         return true;
       }
 
-    bool left = search_helper (current_node->left, value);
-    bool right = search_helper (current_node->right, value);
-
-    return left || right;
+    return search_helper (current_node->left, value) || search_helper (current_node->right, value);
   }
 
   bool
@@ -173,11 +170,10 @@ template <typename T> struct BinaryTree
   {
     if (is_empty ())
       {
-        std::cerr << "Not Found ! Empty Tree" << '\n';
         return false;
       }
     return search_helper (root_node, value);
-  }  
+  }
 
   void
   print () const
@@ -289,16 +285,16 @@ template <typename T> struct BinaryTree
       }
     return count_leaf_nodes_helper (root_node);
   }
-  
 };
 
 int
 main (void)
 {
   BinaryTree<int> t;
-  for (int i = 1; i <= 16; i++)
+  int arr[] = { 15, 7, 20, 3, 9, 18, 25, 1, 12, 10, 30 };
+  for (int i = 0; i < 11; i++)
     {
-      t.insert (i * 10);
+      t.insert (arr[i]);
     }
   t.print ();
 
@@ -307,8 +303,14 @@ main (void)
   std::cout << '\n' << "Total Nodes : " << t.total_nodes ();
   std::cout << '\n' << "Sum of Nodes : " << t.sum_of_nodes ();
   std::cout << '\n' << "No. of Leaf Nodes : " << t.count_leaf_nodes ();
-  std::cout << "\nSearch " << 22  << " : " << std::boolalpha << t.search (22) << std::noboolalpha << '\n';
-  std::cout << "Search " << 40 << " : " << std::boolalpha << t.search(40) << std::noboolalpha << '\n';  
+
+  int tests[] = { 1, 7, 10, 12, 15, 18, 25, 30, 0, 8, 11, 19, 100 };
+  std::cout << "Searching : " << '\n';
+  for (int i = 0; i < 13; i++)
+    {
+      std::cout << std::boolalpha << tests[i] << " is present ? " << t.search (tests[i])
+                                                   << std::noboolalpha << '\n';
+    }
 
   return 0;
 }
