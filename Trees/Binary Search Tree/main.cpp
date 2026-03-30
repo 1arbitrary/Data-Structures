@@ -2,18 +2,22 @@
 
 int main(void) {
     BinarySearchTree<int> t;
-    int arr[] = {15, 7, 20, 3, 9, 18, 25, 1, 12, 10, 30};
 
-    for (int i = 0; i < 11; i++) {
+    int arr[] = {15, 7, 20, 3, 9, 18, 25, 7, 15, 20, 3, 9, 10, 12, 10, 12, 25, 25, 1, 1};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+
+    for (int i = 0; i < arr_size; i++) {
         t.insert(arr[i]);
     }
-
     t.print();
-    int tests[] = {10, 5, 15, 3, 7, 12, 18, 6, 8, 11, 13, 17, 0, 1, 20, 25, -5, 100};
 
-    for (int i = 0; i < 18; i++) {
-        std::cout << "Searching for : " << tests[i] << " " << std::boolalpha << t.search(tests[i])
-                  << std::noboolalpha << '\n';
+    int tests[] = {10, 18, 1, 25, -5, 100, 3};
+    int tests_size = sizeof(tests) / sizeof(tests[0]);
+
+    std::cout << '\n';
+    for (int i = 0; i < tests_size; i++) {
+        std::cout << "Searching for " << tests[i] << " : " << t.search_with_duplicates(tests[i])
+                  << '\n';
     }
 
     return 0;

@@ -68,6 +68,31 @@ template <typename T> struct BinarySearchTree {
         return search_helper(root_node, value);
     }
 
+    int search_with_duplicates_helper(Node<T>* current_node, T value, int& count) const {
+        if (current_node == nullptr) {
+            return count;
+        }
+
+        if (current_node->value == value) {
+            count++;
+        }
+
+        if (current_node->value > value) {
+            return search_with_duplicates_helper(current_node->left, value, count);
+        }
+        return search_with_duplicates_helper(current_node->right, value, count);
+    }
+
+    int search_with_duplicates(T value) const {
+        int count{0};
+        if (is_empty()) {
+            return count;
+        }
+        search_with_duplicates_helper(root_node, value, count);
+
+        return count;
+    }
+
     void insert_helper(Node<T>* current_node, Node<T>* new_node) {
         if (current_node->value > new_node->value) {
             if (current_node->left == nullptr) {
