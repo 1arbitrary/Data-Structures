@@ -1,0 +1,16 @@
+CompileFlags:                     
+  Add: [-std=c++23, -Wall, -Wextra ]
+  Compiler: clang
+  BuiltinHeaders: QueryDriver
+
+
+Completion:
+  AllScopes: Yes
+  ArgumentLists: FullPlaceholders
+  HeaderInsertion: IWYU
+  CodePatterns: All
+  MacroFilter: ExactPrefix
+
+Diagnostics:
+  ClangTidy:
+    FastCheckFilter: Strict
