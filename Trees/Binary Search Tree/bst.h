@@ -120,6 +120,28 @@ template <typename T> struct BinarySearchTree {
         insert_helper(root_node, new_node);
     }
 
+    Node<T>* find_min(Node<T>* current_node) const {
+        if (current_node == nullptr) {
+            return nullptr;
+        }
+
+        while (current_node->left != nullptr) {
+            current_node = current_node->left;
+        }
+        return current_node;
+    }
+
+    Node<T>* find_max(Node<T>* current_node) const {
+        if (current_node == nullptr) {
+            return nullptr;
+        }
+
+        while (current_node->right != nullptr) {
+            current_node = current_node->right;
+        }
+        return current_node;
+    }
+
     void print() const {
         std::cout << "Binary Search Tree : ";
         if (is_empty()) {

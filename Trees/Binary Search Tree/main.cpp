@@ -20,5 +20,8 @@ int main(void) {
                   << '\n';
     }
 
+    std::cout << "Max Node : " << t.find_max() << '\n';
+    std::cout << "Min Node : " << t.find_min() << '\n';
+
     return 0;
 }
