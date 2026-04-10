@@ -22,148 +22,126 @@ template <typename T> struct BinarySearchTree {
     BinarySearchTree(const BinarySearchTree&) = delete;
     BinarySearchTree& operator=(const BinarySearchTree&) = delete;
 
-    bool is_empty() const {
-        return root_node == nullptr;
-    }
-
-    void free_allocated_memory_helper(Node<T>* node) {
-        if (node == nullptr) {
+    void free_allocated_memory_helper(Node<T>** current_node) {
+        if (!*current_node) {
             return;
         }
 
-        free_allocated_memory_helper(node->left);
-        free_allocated_memory_helper(node->right);
+        free_allocated_memory_helper(&(*current_node)->left);
+        free_allocated_memory_helper(&(*current_node)->right);
 
-        delete node;
+        delete *current_node;
+        *current_node = nullptr;
     }
 
     void free_allocated_memory() {
-        if (is_empty()) {
+        if (!root_node) {
             return;
         }
-
-        free_allocated_memory_helper(root_node);
+        free_allocated_memory_helper(&root_node);
         root_node = nullptr;
     }
 
-    bool search_helper(Node<T>* current_node, T value) const {
-        if (current_node == nullptr) {
-            return false;
+    Node<T>** search_helper(Node<T>** current_node, T value) {
+        if (!*current_node) {
+            return current_node;
         }
 
-        if (current_node->value == value) {
-            return true;
+        if ((*current_node)->value == value) {
+            return current_node;
         }
 
-        if (current_node->value > value) {
-            return search_helper(current_node->left, value);
+        if ((*current_node)->value > value) {
+            return search_helper(&(*current_node)->left, value);
         }
-        return search_helper(current_node->right, value);
+        return search_helper(&(*current_node)->right, value);
     }
 
-    bool search(T value) const {
-        if (is_empty()) {
-            return false;
+    Node<T>** search(Node<T>** starting_node, T value) {
+        if (!starting_node) {
+            return nullptr;
         }
-        return search_helper(root_node, value);
+        return search_helper(starting_node, value);
     }
 
-    int search_with_duplicates_helper(Node<T>* current_node, T value, int& count) const {
-        if (current_node == nullptr) {
-            return count;
+    Node<T>** find_min(Node<T>** starting_node) {
+        if (!starting_node || !*starting_node) {
+            return starting_node;
         }
 
-        if (current_node->value == value) {
-            count++;
+        while ((*starting_node)->left) {
+            starting_node = &(*starting_node)->left;
         }
 
-        if (current_node->value > value) {
-            return search_with_duplicates_helper(current_node->left, value, count);
-        }
-        return search_with_duplicates_helper(current_node->right, value, count);
-    }
-
-    int search_with_duplicates(T value) const {
-        int count{0};
-        if (is_empty()) {
-            return count;
-        }
-        search_with_duplicates_helper(root_node, value, count);
-
-        return count;
-    }
-
-    void insert_helper(Node<T>* current_node, Node<T>* new_node) {
-        if (current_node->value > new_node->value) {
-            if (current_node->left == nullptr) {
-                current_node->left = new_node;
-                return;
-            }
-            insert_helper(current_node->left, new_node);
-            return;
-        }
-
-        if (current_node->right == nullptr) {
-            current_node->right = new_node;
-            return;
-        }
-
-        insert_helper(current_node->right, new_node);
+        return starting_node;
     }
 
     void insert(T value) {
-        Node<T>* new_node = new Node<T>(value);
-        if (is_empty()) {
-            root_node = new_node;
+        Node<T>** insert_node = search(&root_node, value);
+        if (!*insert_node) {
+            *insert_node = new Node<T>(value);
+        }
+    }
+
+    void delete_func(T value) {
+        Node<T>** node_tbd = search(&root_node, value);
+        if (!node_tbd || !*node_tbd) {
             return;
         }
-        insert_helper(root_node, new_node);
-    }
 
-    Node<T>* find_min(Node<T>* current_node) const {
-        if (current_node == nullptr) {
-            return nullptr;
+        if (!(*node_tbd)->left && !(*node_tbd)->right) {
+            delete *node_tbd;
+            *node_tbd = nullptr;
+            return;
         }
 
-        while (current_node->left != nullptr) {
-            current_node = current_node->left;
-        }
-        return current_node;
-    }
-
-    Node<T>* find_max(Node<T>* current_node) const {
-        if (current_node == nullptr) {
-            return nullptr;
+        if ((*node_tbd)->left && !(*node_tbd)->right) {
+            Node<T>* temp = *node_tbd;
+            *node_tbd = (*node_tbd)->left;
+            delete temp;
+            return;
         }
 
-        while (current_node->right != nullptr) {
-            current_node = current_node->right;
+        if (!(*node_tbd)->left && (*node_tbd)->right) {
+            Node<T>* temp = *node_tbd;
+            *node_tbd = (*node_tbd)->right;
+            delete temp;
+            return;
         }
-        return current_node;
+
+        if ((*node_tbd)->left && (*node_tbd)->right) {
+            Node<T>** min = find_min(&(*node_tbd)->right);
+            Node<T>* temp = *min;
+            (*node_tbd)->value = (*min)->value;
+            (*min) = (*min)->right;
+            delete temp;
+        }
     }
 
     void print() const {
         std::cout << "Binary Search Tree : ";
-        if (is_empty()) {
-            std::cout << "Empty Binary Search Tree !" << '\n';
+        if (!root_node) {
+            std::cout << "Empty" << '\n';
             return;
         }
 
         std::queue<Node<T>*> printingQueue;
         printingQueue.push(root_node);
-        std::cout << '\n' << "    ";
-        while (!printingQueue.empty()) {
-            std::size_t pops = printingQueue.size();
-            while (pops > 0) {
-                Node<T>* front = printingQueue.front();
-                if (front->left != nullptr)
-                    printingQueue.push(front->left);
-                if (front->right != nullptr)
-                    printingQueue.push(front->right);
 
-                std::cout << front->value << '\t';
-                printingQueue.pop();
-                pops--;
+        while (!printingQueue.empty()) {
+	  std::size_t pops_available = printingQueue.size();
+            while (pops_available > 0) {
+                Node<T>* front_node = printingQueue.front();
+                if (front_node->left) {
+                    printingQueue.push(front_node->left);
+                }
+
+                if (front_node->right) {
+                    printingQueue.push(front_node->right);
+                }
+                std::cout << front_node->value << "  ";
+		printingQueue.pop();
+                pops_available--;
             }
             std::cout << '\n';
         }

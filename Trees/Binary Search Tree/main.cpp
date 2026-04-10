@@ -7,21 +7,17 @@ int main(void) {
     int arr_size = sizeof(arr) / sizeof(arr[0]);
 
     for (int i = 0; i < arr_size; i++) {
-        t.insert(arr[i]);
+      t.insert(arr[i]);
     }
     t.print();
 
-    int tests[] = {10, 18, 1, 25, -5, 100, 3};
-    int tests_size = sizeof(tests) / sizeof(tests[0]);
-
-    std::cout << '\n';
-    for (int i = 0; i < tests_size; i++) {
-        std::cout << "Searching for " << tests[i] << " : " << t.search_with_duplicates(tests[i])
-                  << '\n';
-    }
-
-    std::cout << "Max Node : " << t.find_max() << '\n';
-    std::cout << "Min Node : " << t.find_min() << '\n';
+    t.delete_func(20);
+    t.delete_func(20);
+    t.delete_func(7);
+    t.delete_func(1);
+    t.delete_func(7);
+    t.delete_func(15);
+    t.print();
 
     return 0;
 }
