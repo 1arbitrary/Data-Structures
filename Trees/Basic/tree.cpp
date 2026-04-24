@@ -89,6 +89,38 @@ template <typename T> struct BinaryTree
       }
   }
 
+  bool
+  is_binary_search_tree_helper (Node<T> *current_node, const T *min, const T *max) const
+  {
+    if (!current_node)
+      {
+        return true;
+      }
+
+    if (max && current_node->value > *max)
+      {
+        return false;
+      }
+
+    if (min && current_node->value < *min)
+      {
+        return false;
+      }
+
+    return is_binary_search_tree_helper (current_node->left, min, &current_node->value)
+           && is_binary_search_tree_helper (current_node->right, &current_node->value, max);
+  }
+
+  bool
+  is_binary_search_tree () const
+  {
+    if (!root_node)
+      {
+        return true;
+      }
+    return is_binary_search_tree_helper (root_node, nullptr, nullptr);
+  }
+
   int
   height_bfs () const
   {
@@ -309,8 +341,10 @@ main (void)
   for (int i = 0; i < 13; i++)
     {
       std::cout << std::boolalpha << tests[i] << " is present ? " << t.search (tests[i])
-                                                   << std::noboolalpha << '\n';
+                << std::noboolalpha << '\n';
     }
+
+  std::cout << std::boolalpha << "Is Binary Search Tree : " << t.is_binary_search_tree () << std::noboolalpha << '\n';
 
   return 0;
 }
