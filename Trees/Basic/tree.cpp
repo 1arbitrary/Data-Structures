@@ -89,6 +89,36 @@ template <typename T> struct BinaryTree
       }
   }
 
+    void delete_fn() {
+        if (!root_node) {
+            return;
+        }
+
+        std::queue<Node<T>**> deletionQueue;
+        deletionQueue.push(&root_node);
+
+        Node<T>** node_tbd = nullptr;
+        while (!deletionQueue.empty()) {
+            std::size_t pops = deletionQueue.size();
+            while (pops > 0) {
+                Node<T>** front_node = deletionQueue.front();
+                if ((*front_node)->left) {
+                    deletionQueue.push(&(*front_node)->left);
+                }
+                if ((*front_node)->right) {
+                    deletionQueue.push(&(*front_node)->right);
+                }
+                node_tbd = deletionQueue.back();
+                deletionQueue.pop();
+                pops--;
+            }
+        }
+
+        Node<T>* temp = *node_tbd;
+        *node_tbd = nullptr;
+        delete temp;
+    }  
+
   bool
   is_binary_search_tree_helper (Node<T> *current_node, const T *min, const T *max) const
   {
