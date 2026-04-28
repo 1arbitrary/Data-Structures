@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/home/dot/Documents/Data-Structures/Trees/Basic/",
+    "command": "clang++ -std=c++23 main.cpp bst.h -O3 -Iinclude",
+    "file": "main.cpp"
+  }
+]
