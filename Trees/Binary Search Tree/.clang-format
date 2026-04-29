@@ -1,10 +1,8 @@
-BasedOnStyle: LLVM
-IndentWidth: 4
+BasedOnStyle: GNU
+IndentWidth: 2
 Language: Cpp
-
-DerivePointerAlignment: false
-PointerAlignment: Left
-
+DerivePointerAlignment: true
+PointerAlignment: false
 AllowShortFunctionsOnASingleLine: Empty
 SortIncludes: true
 ColumnLimit: 100
