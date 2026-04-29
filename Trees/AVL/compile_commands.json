@@ -1,7 +1,7 @@
 [
   {
     "directory": "/home/dot/Documents/Data-Structures/Trees/AVL/",
-    "command": "clang++ -std=c++23 -Wall -Wextra main.cpp avl.h -O3 -Iinclude",
+    "command": "clang++ main.cpp -std=c++23 -Wall -Wextra -O3",
     "file": "main.cpp"
   }
 ]
