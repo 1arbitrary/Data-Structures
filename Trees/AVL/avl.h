@@ -64,46 +64,14 @@ template <typename T> struct AVLTree {
   void insert(T value) {
     if (!root_node) {
       root_node = new Node<T>(value);
-      update_height(value);
       return;
     }
     insert_helper(&root_node, value);
-    update_height(value);
-  }
-
-  int update_height_helper(Node<T> *current_node, T value) {
-    if (!current_node) {
-      return -1;
-    }
-
-    if (current_node->value == value) {
-      return current_node->height;
-    }
-
-    if (current_node->value > value) {
-      current_node->height =
-          1 + std::max(update_height_helper(current_node->left, value),
-                       update_height_helper(current_node->right, value));
-      return current_node->height;
-    } else if (current_node->value < value) {
-      current_node->height =
-          1 + std::max(update_height_helper(current_node->left, value),
-                       update_height_helper(current_node->right, value));
-      return current_node->height;
-    }
-
-    return 0;
-  }
-
-  void update_height(T value) {
-    if (!root_node) {
-      return;
-    }
-    root_node->height = update_height_helper(root_node, value);
   }
 
   void print() const {
     std::println("Height of tree : {}", root_node->height);
+    std::println("Balance Factor of tree : {}", root_node->balance_factor);
     std::println("AVL Tree : ");
 
     if (!root_node) {
