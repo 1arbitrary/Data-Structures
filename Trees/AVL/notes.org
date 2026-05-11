@@ -1,0 +1,17 @@
+* AVL Rotation Notes
+
+** P.S. while thinking about rotations
+
+Honestly, the thing that finally made rotations click for me was stopping thinking in terms of “moving pointers around” and instead thinking about BST ordering.
+
+For a right rotation:
+- the new root comes from the left subtree, so it HAS to be smaller than the old root.
+- because of that, the old root naturally becomes the right child of the new root.
+
+The other important observation:
+- the old right child of the new root (T2) cannot disappear.
+- it is greater than the new root but still smaller than the old root, so it fits perfectly as the left child/subtree of the old root after rotation.
+
+Same logic applies symmetrically for left rotation. Make sure to keep the heights of nodes after relinking nodes.
+
+This made rotations feel much less like memorizing cases and much more like preserving inorder ordering.
