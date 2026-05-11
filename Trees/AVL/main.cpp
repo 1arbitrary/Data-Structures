@@ -1,16 +1,25 @@
 #include "avl.h"
 
 int main(void) {
-  AVLTree<int> t;
+    AVLTree<int> t;
 
-  t.insert(10);
-  t.print();
+    t.insert(80);
+    t.print();
 
-  t.insert(12);
-  t.print();
-  
-  t.insert(11);
-  t.print();
+    t.insert(90);
+    t.print();
 
-  return 0;
+    t.insert(50);
+    t.print();
+
+    t.insert(40);
+    t.print();
+    
+    t.insert(60);
+    t.print();
+
+    t.insert(70);
+    t.print();
+    
+    return 0;
 }
