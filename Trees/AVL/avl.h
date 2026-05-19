@@ -1,111 +1,43 @@
 #ifndef AVL_H
 #define AVL_H
 
+#include <cassert>
+#include <concepts>
 #include <print>
 #include <queue>
 
 template <typename T>
+    requires std::totally_ordered<T>
 struct Node {
     T value;
     int height;
     int balance_factor;
     Node<T> *left;
     Node<T> *right;
-    Node(T v) : value(v), height(0), balance_factor(0), left(nullptr), right(nullptr) {}
+    Node(const T &v) : value(v), height(0), balance_factor(0), left(nullptr), right(nullptr) {}
 };
 
 template <typename T>
+    requires std::totally_ordered<T>
 struct AVLTree {
-    Node<T> *root_node = nullptr;
-
+   public:
     AVLTree() = default;
     ~AVLTree() { free_allocated_memory(); }
 
     AVLTree(const AVLTree &) = delete;
     AVLTree &operator=(const AVLTree &) = delete;
 
-    void free_allocated_memory_helper(Node<T> *current_node) {
-        if (!current_node) {
-            return;
-        }
+    AVLTree(AVLTree &&) = delete;
+    AVLTree &operator=(AVLTree &&) = delete;
 
-        free_allocated_memory_helper(current_node->left);
-        free_allocated_memory_helper(current_node->right);
+    void insert(const T &value) { root_node = insert_helper(root_node, value); }
 
-        delete current_node;
-    }
-
-    void free_allocated_memory() {
+    void delete_fn(const T &value) {
         if (!root_node) {
             return;
         }
-        free_allocated_memory_helper(root_node);
-        root_node = nullptr;
+        root_node = delete_func_helper(root_node, value);
     }
-
-    Node<T> *rotate_left(Node<T> *current_node) {
-        Node<T> *temp = current_node->right;
-        current_node->right = temp->left;
-        temp->left = update(current_node);
-	return update(temp);
-    }
-
-    Node<T> *rotate_right(Node<T> *current_node) {
-        Node<T> *temp = current_node->left;
-        current_node->left = temp->right;
-        temp->right = update(current_node);
-	return update(temp);
-    }
-
-    Node<T> *balance(Node<T> *current_node) {
-        if ((-1 <= current_node->balance_factor) && current_node->balance_factor <= 1) {
-            return current_node;
-        }
-
-        if (current_node->balance_factor > 1) {
-            if (current_node->left->balance_factor < 0) {
-                current_node->left = rotate_left(current_node->left);
-            }
-            return rotate_right(current_node);
-        }
-        if (current_node->right->balance_factor > 0) {
-            current_node->right = rotate_right(current_node->right);
-        }
-        return rotate_left(current_node);
-    }
-
-    int get_height(Node<T> *current_node) const {
-        return (current_node) ? current_node->height : -1;
-    }
-
-    Node<T> *update(Node<T> *current_node) {
-        if (!current_node) {
-            return current_node;
-        }
-        int left_height = get_height(current_node->left);
-        int right_height = get_height(current_node->right);
-        current_node->height = 1 + std::max(left_height, right_height);
-        current_node->balance_factor = left_height - right_height;
-
-        return current_node;
-    }
-
-    Node<T> *insert_helper(Node<T> *current_node, T value) {
-        if (!current_node) {
-            return new Node<T>(value);
-        } else if (value == current_node->value) {
-            return current_node;
-        }
-
-        if (value < current_node->value) {
-            current_node->left = insert_helper(current_node->left, value);
-            return balance(update(current_node));
-        }
-        current_node->right = insert_helper(current_node->right, value);
-        return balance(update(current_node));
-    }
-
-    void insert(T value) { root_node = insert_helper(root_node, value); }
 
     void print() const {
         std::println("AVL Tree : ");
@@ -133,6 +65,147 @@ struct AVLTree {
             }
             std::println();
         }
+    }
+
+   private:
+    Node<T> *root_node = nullptr;
+    void free_allocated_memory_helper(Node<T> *current_node) {
+        if (!current_node) {
+            return;
+        }
+
+        free_allocated_memory_helper(current_node->left);
+        free_allocated_memory_helper(current_node->right);
+
+        delete current_node;
+    }
+
+    void free_allocated_memory() {
+        if (!root_node) {
+            return;
+        }
+        free_allocated_memory_helper(root_node);
+        root_node = nullptr;
+    }
+
+    Node<T> *rotate_left(Node<T> *current_node) {
+        Node<T> *temp = current_node->right;
+        current_node->right = temp->left;
+        temp->left = update(current_node);
+        return update(temp);
+    }
+
+    Node<T> *rotate_right(Node<T> *current_node) {
+        Node<T> *temp = current_node->left;
+        current_node->left = temp->right;
+        temp->right = update(current_node);
+        return update(temp);
+    }
+
+    Node<T> *balance(Node<T> *current_node) {
+        if (!current_node) {
+            return current_node;
+        }
+
+        if ((-1 <= current_node->balance_factor) && current_node->balance_factor <= 1) {
+            return current_node;
+        } else {
+            if (current_node->balance_factor > 1) {
+                assert(current_node->left);
+                if (current_node->left->balance_factor < 0) {
+                    current_node->left = rotate_left(current_node->left);
+                }
+                return rotate_right(current_node);
+            } else {
+                assert(current_node->right);
+                if (current_node->right->balance_factor > 0) {
+                    current_node->right = rotate_right(current_node->right);
+                }
+                return rotate_left(current_node);
+            }
+        }
+    }
+
+    int get_height(Node<T> *current_node) const {
+        return (current_node) ? current_node->height : -1;
+    }
+
+    Node<T> *update(Node<T> *current_node) {
+        if (!current_node) {
+            return current_node;
+        }
+        int left_height = get_height(current_node->left);
+        int right_height = get_height(current_node->right);
+        current_node->height = 1 + std::max(left_height, right_height);
+        current_node->balance_factor = left_height - right_height;
+
+        return current_node;
+    }
+
+    Node<T> *find_min(Node<T> *current_node) {
+        if (!current_node) {
+            return nullptr;
+        }
+        while (current_node->left) {
+            current_node = current_node->left;
+        }
+        return current_node;
+    }
+
+    Node<T> *insert_helper(Node<T> *current_node, const T &value) {
+        if (!current_node) {
+            return new Node<T>(value);
+        } else if (value == current_node->value) {
+            return current_node;
+        }
+
+        if (value < current_node->value) {
+            current_node->left = insert_helper(current_node->left, value);
+            return balance(update(current_node));
+        }
+        current_node->right = insert_helper(current_node->right, value);
+        return balance(update(current_node));
+    }
+
+    Node<T> *delete_func_helper(Node<T> *current_node, const T &value) {
+        if (!current_node) {
+            return nullptr;
+        }
+
+        if (current_node->value == value) {
+            if (!current_node->left && !current_node->right) {
+                Node<T> *temp = current_node;
+                delete temp;
+                return nullptr;
+            }
+
+            if (current_node->left && !current_node->right) {
+                Node<T> *temp = current_node;
+                current_node = current_node->left;
+                delete temp;
+                return balance(update(current_node));
+            } else if (!current_node->left && current_node->right) {
+                Node<T> *temp = current_node;
+                current_node = current_node->right;
+                delete temp;
+                return balance(update(current_node));
+            }
+
+            if (current_node->left && current_node->right) {
+                Node<T> *min_node = find_min(current_node->right);
+                T temp_val = min_node->value;
+                current_node->right = delete_func_helper(current_node->right, min_node->value);
+                current_node->value = temp_val;
+                return balance(update(current_node));
+            }
+        }
+
+        if (current_node->value > value) {
+            current_node->left = delete_func_helper(current_node->left, value);
+            return balance(update(current_node));
+        }
+        current_node->right = delete_func_helper(current_node->right, value);
+        return balance(update(current_node));
     }
 };
 
