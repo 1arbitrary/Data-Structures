@@ -20,6 +20,8 @@ int main(void) {
 
     t.insert(70);
     t.print();
-    
+
+    t.delete_fn(60);
+    t.print();
     return 0;
 }
