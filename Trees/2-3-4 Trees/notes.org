@@ -1,0 +1,50 @@
+* Observations : 2-3-4 Trees
+
+- Uses static arrays for storing keys and children.
+  #+BEGIN_SRC C++
+    T keys[4];
+    Node<T>* children[5];
+  #+END_SRC
+
+- Physical storage capacity and legal occupancy are different invariants.
+  - Legal non-overflow key_count ∈ {1, 2, 3}
+  - Temporary overflow state may contain 4 keys before split.
+
+- Internal node invariant :
+  - child_count = key_count + 1
+
+- Leaf node invariant :
+  - child_count = 0
+
+- Active key region :
+  - [0, key_count]
+  - Only keys within this interval participate in traversal, insertion and comparisons.
+
+- 2-3-4 Trees grow upwards. Root split increases tree height.
+
+- Traversal is partition based and not binary-tree based.
+  Example :
+  [15 | 30 | 50]
+
+  child0 : (-inf, 15)
+  child1 : (15, 30)
+  child2 : (30, 50)
+  child3 : (50, +inf)
+
+- Top-down insertion invariant :
+  - Never descend into a full node.
+
+** Helper Functions :
+
+- shift_arr :
+  - Performs right shift on active interval [start, end)
+  - end represents first free slot.
+  - Movement occurs from right-to-left to prevent overwriting unread values.
+
+#+BEGIN_SRC cpp
+void shift_arr(T (&arr)[4], std::size_t start, std::size_t end) {
+    for (std::size_t i{end}; i > start; i--) {
+        arr[i] = arr[i - 1];
+    }
+}
+#+END_SRC
