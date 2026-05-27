@@ -1,0 +1,7 @@
+[
+  {
+    "directory": "/home/dot/Documents/Data-Structures/Trees/2-3-4 Trees/",
+    "command": "clang++ main.cpp -std=c++23 -Wall -Wextra -O3",
+    "file": "main.cpp"
+  }
+]
