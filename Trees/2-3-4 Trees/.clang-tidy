@@ -1,0 +1,37 @@
+---
+Checks: >
+  clang-diagnostic-*,
+  clang-analyzer-*,
+  bugprone-*,
+  performance-*,
+  portability-*,
+  modernize-*,
+  -modernize-use-auto,
+  -modernize-use-trailing-return-type
+
+WarningsAsErrors: ''
+
+HeaderFileExtensions:
+  - ''
+  - h
+  - hh
+  - hpp
+  - hxx
+
+ImplementationFileExtensions:
+  - c
+  - cc
+  - cpp
+  - cxx
+
+HeaderFilterRegex: '.*'
+ExcludeHeaderFilterRegex: ''
+
+FormatStyle: none
+
+User: dot
+
+CheckOptions: {}
+
+SystemHeaders: false
+...
