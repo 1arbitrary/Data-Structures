@@ -1,25 +1,16 @@
 #include "twothreefour.h"
+#include <array>
 
-int main() {
+int main()
+{
     TwoThreeFour<int> t;
-    t.insert(10);
-    t.insert(5);
-    t.insert(15);
-    t.insert(20);
-    t.insert(30);
-    t.insert(40);
-    t.insert(50);
+
+    std::array<int, 18> vals { 100, 50, 150, 25, 75, 125, 175, 60, 65, 70, 61, 62, 63, 64, 66, 67,
+        68, 69 };
+
+    for (int x : vals) {
+        t.insert(x);
+    }
     t.print();
-    t.insert(60);
-    t.print();
-    t.insert(70);
-    t.insert(25);
-    t.insert(1);
-    t.insert(2);
-    t.insert(3);
-    t.insert(4);
-    t.insert(80);
-    t.insert(90);
-    t.print();
-  return 0;
+    return 0;
 }

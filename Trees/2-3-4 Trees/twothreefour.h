@@ -31,7 +31,14 @@ private:
         root_node = nullptr;
     }
 
-    void ShiftArr(std::array<T, 3>& arr, Size begin, Size end)
+    void ShiftKeysArr(std::array<T, 3>& arr, Size begin, Size end)
+    {
+        for (Size i { end }; begin < i; i--) {
+            arr[i] = arr[i - 1];
+        }
+    }
+
+    void ShiftChildrenArr(std::array<Node<T>*, 4>& arr, Size begin, Size end)
     {
         for (Size i { end }; begin < i; i--) {
             arr[i] = arr[i - 1];
@@ -63,30 +70,33 @@ private:
     Node<T>* InsertIntoSubtree(Node<T>* node, const T& value)
     {
         if (node == root_node && root_node->key_count == 3) {
-          // Node<T>* splitted_node = SplitNode(node);
-          // the bug is here
-	  return InsertIntoSubtree(SplitNode(node), value);
+            return InsertIntoSubtree(SplitNode(node), value);
         }
 
         Size i { 0 };
         while (i < node->key_count) {
             if (value == node->keys[i]) {
-                return nullptr;
+                return node;
             }
             if (value > node->keys[i]) {
-                while ((i < node->key_count) && (value > node->keys[i])) {
+                while ((i < node->key_count) && value > node->keys[i]) {
                     i++;
                 }
-                if (node->children[i] && node->children[i]->key_count < 3) {
+                if ((node->children[i]) && (node->children[i]->key_count < 3)) {
                     node->children[i] = InsertIntoSubtree(node->children[i], value);
                     return node;
-                } else if (node->children[i] && node->children[i]->key_count == 3) {
+                } else if ((node->children[i]) && (node->children[i]->key_count == 3)) {
                     Node<T>* splitted_node = SplitNode(node->children[i]);
+                    ShiftKeysArr(node->keys, i, node->key_count);
                     node->keys[i] = splitted_node->keys[0];
                     node->key_count++;
-		    // verify the overwrite situation
+                    ShiftChildrenArr(node->children, i, node->key_count);
                     node->children[i] = splitted_node->children[0];
-                    node->children[++i] = splitted_node->children[1];
+                    node->children[i + 1] = splitted_node->children[1];
+		    i = 0;
+                    while ((i < node->key_count) && value > node->keys[i]) {
+                      i++;
+                    }
                     node->children[i] = InsertIntoSubtree(node->children[i], value);
                     return node;
                 }
@@ -94,34 +104,34 @@ private:
                     node->keys[node->key_count++] = value;
                     return node;
                 }
-                continue;
             }
 
             if (value < node->keys[i]) {
-                while ((i < node->key_count) && (value > node->keys[i])) {
-                    i++;
-                }
                 if ((node->children[i]) && (node->children[i]->key_count < 3)) {
-                  node->children[i] = InsertIntoSubtree(node->children[i], value);
-                  return node;
-                } else if (node->children[i] && node->children[i]->key_count == 3) {
+                    node->children[i] = InsertIntoSubtree(node->children[i], value);
+                    return node;
+                } else if ((node->children[i]) && (node->children[i]->key_count == 3)) {
                     Node<T>* splitted_node = SplitNode(node->children[i]);
+                    ShiftKeysArr(node->keys, i, node->key_count);
                     node->keys[i] = splitted_node->keys[0];
                     node->key_count++;
-		    // verify the overwrite situation
+                    ShiftChildrenArr(node->children, i, node->key_count);
                     node->children[i] = splitted_node->children[0];
-                    node->children[++i] = splitted_node->children[1];
+                    node->children[i + 1] = splitted_node->children[1];
+		    i = 0;
+                    while ((i < node->key_count) && value > node->keys[i]) {
+                      i++;
+                    }
                     node->children[i] = InsertIntoSubtree(node->children[i], value);
                     return node;
                 }
 
-                ShiftArr(node->keys, i, node->key_count);
+                ShiftKeysArr(node->keys, i, node->key_count);
                 node->keys[i] = value;
                 node->key_count++;
                 return node;
             }
         }
-
         return node;
     }
 
@@ -167,6 +177,7 @@ public:
         std::println("\t");
         while (!printing_queue.empty()) {
             Size units = printing_queue.size();
+            std::print("[ ");
             while (units != 0) {
                 Node<T>* node = printing_queue.front();
                 if (node->children[i]) {
@@ -179,10 +190,10 @@ public:
                     i = 0;
                     units--;
                     printing_queue.pop();
-                    std::print("\t");
+                    std::print("]");
                 }
             }
-            std::println();
+            std::println(" ]");
         }
     }
 };
