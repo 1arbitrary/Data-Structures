@@ -1,3 +1,4 @@
+#include <compare>
 #ifndef TWOTHREEFOUR_H
 
 #include <array>
@@ -67,6 +68,29 @@ private:
 
     void Delete_helper(Node<T>* node, const T& value);
 
+    Node<T>* RepairNode(Node<T>* node, const T& value, Size& i)
+    {
+        Node<T>* splitted_node = SplitNode(node->children[i]);
+        ShiftKeysArr(node->keys, i, node->key_count);
+
+        node->keys[i] = splitted_node->keys[0];
+        node->key_count++;
+
+        ShiftChildrenArr(node->children, i, node->key_count);
+        node->children[i] = splitted_node->children[0];
+        node->children[i + 1] = splitted_node->children[1];
+
+        delete splitted_node;
+        splitted_node = nullptr;
+
+        i = 0;
+        while ((i < node->key_count) && value > node->keys[i]) {
+            i++;
+        }
+
+        return node;
+    }
+
     Node<T>* InsertIntoSubtree(Node<T>* node, const T& value)
     {
         if (node == root_node && root_node->key_count == 3) {
@@ -74,64 +98,37 @@ private:
         }
 
         Size i { 0 };
-        while (i < node->key_count) {
-            if (value == node->keys[i]) {
+        while ((i < node->key_count)) {
+            std::strong_ordering cmp = value <=> node->keys[i];
+            if (cmp == std::strong_ordering::equal) {
                 return node;
-            }
-            if (value > node->keys[i]) {
-                while ((i < node->key_count) && value > node->keys[i]) {
-                    i++;
-                }
-                if ((node->children[i]) && (node->children[i]->key_count < 3)) {
-                    node->children[i] = InsertIntoSubtree(node->children[i], value);
-                    return node;
-                } else if ((node->children[i]) && (node->children[i]->key_count == 3)) {
-                    Node<T>* splitted_node = SplitNode(node->children[i]);
-                    ShiftKeysArr(node->keys, i, node->key_count);
-                    node->keys[i] = splitted_node->keys[0];
-                    node->key_count++;
-                    ShiftChildrenArr(node->children, i, node->key_count);
-                    node->children[i] = splitted_node->children[0];
-                    node->children[i + 1] = splitted_node->children[1];
-		    i = 0;
-                    while ((i < node->key_count) && value > node->keys[i]) {
-                      i++;
-                    }
-                    node->children[i] = InsertIntoSubtree(node->children[i], value);
-                    return node;
-                }
-                if (i == node->key_count) {
-                    node->keys[node->key_count++] = value;
-                    return node;
-                }
-            }
-
-            if (value < node->keys[i]) {
-                if ((node->children[i]) && (node->children[i]->key_count < 3)) {
-                    node->children[i] = InsertIntoSubtree(node->children[i], value);
-                    return node;
-                } else if ((node->children[i]) && (node->children[i]->key_count == 3)) {
-                    Node<T>* splitted_node = SplitNode(node->children[i]);
-                    ShiftKeysArr(node->keys, i, node->key_count);
-                    node->keys[i] = splitted_node->keys[0];
-                    node->key_count++;
-                    ShiftChildrenArr(node->children, i, node->key_count);
-                    node->children[i] = splitted_node->children[0];
-                    node->children[i + 1] = splitted_node->children[1];
-		    i = 0;
-                    while ((i < node->key_count) && value > node->keys[i]) {
-                      i++;
-                    }
-                    node->children[i] = InsertIntoSubtree(node->children[i], value);
-                    return node;
-                }
-
-                ShiftKeysArr(node->keys, i, node->key_count);
-                node->keys[i] = value;
-                node->key_count++;
-                return node;
+            } else if (cmp == std::strong_ordering::greater) {
+                i++;
+            } else {
+                break;
             }
         }
+
+        bool can_descend = node->children[i];
+        if (can_descend) {
+            bool needs_repair = (node->children[i]) && ((node->children[i])->key_count == 3);
+            if (needs_repair) {
+                Node<T>* repaired_node = RepairNode(node, value, i);
+                node->children[i] = InsertIntoSubtree(repaired_node->children[i], value);
+            } else {
+                node->children[i] = InsertIntoSubtree(node->children[i], value);
+            }
+            return node;
+        }
+
+        if (i == node->key_count) {
+            node->keys[node->key_count++] = value;
+            return node;
+        }
+
+        ShiftKeysArr(node->keys, i, node->key_count);
+        node->keys[i] = value;
+        node->key_count++;
         return node;
     }
 
