@@ -128,7 +128,7 @@ private:
 
         bool can_descend = node->children[i];
         if (can_descend) {
-            bool needs_repair = (node->children[i]) && ((node->children[i])->key_count == 3);
+            bool needs_repair = (node->children[i])->key_count == 3;
             if (needs_repair) {
                 Node<T>* repaired_node = RepairNode(node, value, i);
                 node->children[i] = InsertIntoSubtree(repaired_node->children[i], value);
