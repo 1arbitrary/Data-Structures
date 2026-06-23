@@ -1,7 +1,7 @@
-#include <compare>
 #ifndef TWOTHREEFOUR_H
 
 #include <array>
+#include <compare>
 #include <concepts>
 #include <print>
 #include <queue>
@@ -25,10 +25,27 @@ private:
     using Size = std::size_t;
     Node<T>* root_node = nullptr;
 
-    void FreeAllocatedSubtree();
-    void free_allocated_memory()
+    void FreeAllocatedSubtree(Node<T>* node)
     {
-        FreeAllocatedSubtree();
+        Size i { 0 };
+        while (i <= node->key_count) {
+            bool can_descend = node->children[i];
+            if (can_descend) {
+                FreeAllocatedSubtree(node->children[i]);
+                node->children[i] = nullptr;
+            }
+            if (i == node->key_count) {
+                delete node;
+                node = nullptr;
+                return;
+            }
+            i++;
+        }
+    }
+
+    void Free_Allocated_Memory()
+    {
+        FreeAllocatedSubtree(root_node);
         root_node = nullptr;
     }
 
@@ -134,7 +151,7 @@ private:
 
 public:
     TwoThreeFour() = default;
-    // ~TwoThreeFour() { free_allocated_memory(); }
+    ~TwoThreeFour() { Free_Allocated_Memory(); }
 
     TwoThreeFour(const TwoThreeFour&) = delete;
     TwoThreeFour& operator=(const TwoThreeFour) = delete;
