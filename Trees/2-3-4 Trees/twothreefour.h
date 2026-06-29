@@ -1,6 +1,7 @@
 #ifndef TWOTHREEFOUR_H
 
 #include <array>
+#include <cassert>
 #include <compare>
 #include <concepts>
 #include <print>
@@ -23,6 +24,7 @@ template <typename T>
 struct TwoThreeFour {
 private:
     using Size = std::size_t;
+    using Strong = std::strong_ordering;
     Node<T>* root_node = nullptr;
 
     void FreeAllocatedSubtree(Node<T>* node)
@@ -49,17 +51,31 @@ private:
         root_node = nullptr;
     }
 
-    void ShiftKeysArr(std::array<T, 3>& arr, Size begin, Size end)
+    void ShiftKeysArrForward(std::array<T, 3>& arr, Size begin, Size end)
     {
         for (Size i { end }; begin < i; i--) {
             arr[i] = arr[i - 1];
         }
     }
 
-    void ShiftChildrenArr(std::array<Node<T>*, 4>& arr, Size begin, Size end)
+    void ShiftKeysArrBackwards(std::array<T, 3>& arr, Size begin, Size end)
+    {
+        for (Size i { begin }; i < (end - 1); i++) {
+            arr[i] = arr[i + 1];
+        }
+    }
+
+    void ShiftChildrenArrForward(std::array<Node<T>*, 4>& arr, Size begin, Size end)
     {
         for (Size i { end }; begin < i; i--) {
             arr[i] = arr[i - 1];
+        }
+    }
+
+    void ShiftChildrenArrBackwards(std::array<Node<T>*, 4>& arr, Size begin, Size end)
+    {
+        for (Size i { begin }; i < (end - 1); i++) {
+            arr[i] = arr[i + 1];
         }
     }
 
@@ -83,17 +99,120 @@ private:
         return subtree_root;
     }
 
-    void Delete_helper(Node<T>* node, const T& value);
+    bool IsLeafNode(Node<T>* node)
+    {
+        Size i { 0 };
+
+        while (i <= node->key_count) {
+            bool can_descend = node->children[i];
+            if (can_descend) {
+                return false;
+            }
+            i++;
+        }
+        return true;
+    }
+
+    Node<T>* FindSmallestNodeParent(Node<T>* node)
+    {
+        if (!node) {
+            return node;
+        }
+        Node<T>* smallest_node_parent = node;
+        while ((smallest_node_parent->children[0])->children[0]) {
+            smallest_node_parent = smallest_node_parent->children[0];
+        }
+        return smallest_node_parent;
+    }
+
+    Node<T>* GetExistingSingleChild(std::array<Node<T>*, 4>& arr, Size& i)
+    {
+        if ((arr[i]) && !(arr[i + 1])) {
+            return arr[i];
+        } else {
+            i++;
+            return arr[i + 1];
+        }
+        return nullptr;
+    }
+
+    Node<T>* DeleteFromSubtree(Node<T>* node, const T& value)
+    {
+        assert(node);
+        Size i { 0 };
+        Strong cmp { Strong::less };
+        while (i < node->key_count) {
+            cmp = value <=> node->keys[i];
+            if (cmp == Strong::greater) {
+                i++;
+            } else {
+                break;
+            }
+        }
+
+        if (cmp == Strong::equal) {
+            if (IsLeafNode(node)) {
+                if (node->key_count == 1) {
+                    delete node;
+                    node = nullptr;
+                    return node;
+                }
+                ShiftKeysArrBackwards(node->keys, i, node->key_count);
+                node->key_count--;
+                return node;
+            } else if (!IsLeafNode(node)) {
+                bool single_child = (node->children[i] || !node->children[i + 1])
+                    && (!node->children[i] || node->children[i + 1]);
+                bool multiple_children = node->children[i] && node->children[i + 1];
+                if (single_child) {
+                    Node<T>* existing_child = GetExistingSingleChild(node->children, i);
+                    node->keys[i] = existing_child->keys[0];
+                    if (IsLeafNode(existing_child) && node->children[i]->key_count == 1) {
+                        delete existing_child;
+                        node->children[i] = nullptr;
+                        return node;
+                    }
+                    ShiftKeysArrBackwards(existing_child->keys, i, existing_child->key_count);
+                    ShiftChildrenArrBackwards(
+                        existing_child->children, i, existing_child->key_count);
+                    existing_child->key_count--;
+                    // make sure to cleanup
+                    return node;
+                } else if (multiple_children) {
+                    // get the smallest node from the right subtree
+                    Node<T>* smallest_node_parent = FindSmallestNodeParent(node->children[i + 1]);
+                    node->keys[i] = (smallest_node_parent->children[0])->keys[0];
+                    if (IsLeafNode(smallest_node_parent->children[0])
+                        && smallest_node_parent->children[0]->key_count == 1) {
+                        delete smallest_node_parent->children[0];
+                        smallest_node_parent->children[0] = nullptr;
+                        return node;
+                    }
+                }
+                ShiftKeysArrBackwards(node->keys, i, node->key_count);
+                ShiftChildrenArrBackwards(node->children, i, node->key_count);
+                node->key_count--;
+                return node;
+            }
+        }
+
+        if (node->children[i]) {
+            node->children[i] = DeleteFromSubtree(node->children[i], value);
+        } else {
+            std::println("{} doesn't exist in the tree.", value);
+        }
+        return node;
+    }
 
     Node<T>* RepairNode(Node<T>* node, const T& value, Size& i)
     {
         Node<T>* splitted_node = SplitNode(node->children[i]);
-        ShiftKeysArr(node->keys, i, node->key_count);
+        ShiftKeysArrForward(node->keys, i, node->key_count);
 
         node->keys[i] = splitted_node->keys[0];
         node->key_count++;
 
-        ShiftChildrenArr(node->children, i, node->key_count);
+        ShiftChildrenArrForward(node->children, i, node->key_count);
         node->children[i] = splitted_node->children[0];
         node->children[i + 1] = splitted_node->children[1];
 
@@ -116,10 +235,10 @@ private:
 
         Size i { 0 };
         while ((i < node->key_count)) {
-            std::strong_ordering cmp = value <=> node->keys[i];
-            if (cmp == std::strong_ordering::equal) {
+            Strong cmp = value <=> node->keys[i];
+            if (cmp == Strong::equal) {
                 return node;
-            } else if (cmp == std::strong_ordering::greater) {
+            } else if (cmp == Strong::greater) {
                 i++;
             } else {
                 break;
@@ -143,7 +262,7 @@ private:
             return node;
         }
 
-        ShiftKeysArr(node->keys, i, node->key_count);
+        ShiftKeysArrForward(node->keys, i, node->key_count);
         node->keys[i] = value;
         node->key_count++;
         return node;
@@ -159,12 +278,12 @@ public:
     TwoThreeFour(TwoThreeFour&&) = delete;
     TwoThreeFour& operator=(TwoThreeFour&&) = delete;
 
-    void DeleteSubtree(const T& value)
+    void Delete(const T& value)
     {
         if (!root_node) {
             return;
         }
-        root_node = Delete_helper(root_node, value);
+        root_node = DeleteFromSubtree(root_node, value);
     }
 
     void insert(const T& value)
