@@ -1,4 +1,5 @@
-#include "twothreefour.h"
+
+#include "twothreefour.hpp"
 #include <array>
 #include <print>
 
@@ -13,31 +14,17 @@ int main()
         t.insert(x);
     }
 
-    // Sequence 1
     t.Delete(63);
-    t.print();
-
     t.Delete(64);
-    t.print();
-
     t.Delete(62);
-    t.print();
-
     t.Delete(61);
-    t.print();
-
     t.Delete(60);
-    t.print();
-
     t.Delete(65);
     t.print();
-
-    // t.Delete(66);
-    // t.print();
-
-    // t.Delete(67);
-    // t.print();
-
+    t.Delete(66);
+    t.print();
+    t.Delete(67);
+    t.print();
     // t.Delete(68);
     // t.print();
 

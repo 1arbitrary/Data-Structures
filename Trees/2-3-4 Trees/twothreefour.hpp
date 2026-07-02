@@ -1,4 +1,4 @@
-#ifndef TWOTHREEFOUR_H
+#ifndef TWOTHREEFOUR_HPP
 
 #include <array>
 #include <cassert>
@@ -15,8 +15,8 @@ private:
 
 public:
     std::size_t key_count = 0;
-    std::array<T, keys_arr_size> keys { };
-    std::array<Node<T>*, keys_arr_size + 1> children { };
+    std::array<T, keys_arr_size> keys {};
+    std::array<Node<T>*, keys_arr_size + 1> children {};
 };
 
 template <typename T>
@@ -118,9 +118,11 @@ private:
         if (!node) {
             return node;
         }
+
         Node<T>* smallest_node_parent = node;
-        while ((smallest_node_parent->children[0])->children[0]) {
-            smallest_node_parent = smallest_node_parent->children[0];
+        while ((smallest_node_parent->children[1])
+            && (smallest_node_parent->children[1])->children[0]) {
+            smallest_node_parent = smallest_node_parent->children[1];
         }
         return smallest_node_parent;
     }
@@ -161,8 +163,8 @@ private:
                 node->key_count--;
                 return node;
             } else if (!IsLeafNode(node)) {
-                bool single_child = (node->children[i] || !node->children[i + 1])
-                    && (!node->children[i] || node->children[i + 1]);
+                bool single_child = (node->children[i] && !node->children[i + 1])
+                    || (!node->children[i] && node->children[i + 1]);
                 bool multiple_children = node->children[i] && node->children[i + 1];
                 if (single_child) {
                     Node<T>* existing_child = GetExistingSingleChild(node->children, i);
@@ -179,27 +181,28 @@ private:
                     // make sure to cleanup
                     return node;
                 } else if (multiple_children) {
-                    // get the smallest node from the right subtree
-                    Node<T>* smallest_node_parent = FindSmallestNodeParent(node->children[i + 1]);
-                    node->keys[i] = (smallest_node_parent->children[0])->keys[0];
+                    Node<T>* smallest_node_parent = FindSmallestNodeParent(node);
+                    assert(smallest_node_parent->children[1]); // redundant but okay
+                    node->keys[i] = smallest_node_parent->children[1]
+                                        ->keys[0]; // replacement from right subtree
                     if (IsLeafNode(smallest_node_parent->children[0])
                         && smallest_node_parent->children[0]->key_count == 1) {
                         delete smallest_node_parent->children[0];
                         smallest_node_parent->children[0] = nullptr;
                         return node;
                     }
+                    ShiftKeysArrBackwards(node->keys, i, node->key_count);
+                    ShiftChildrenArrBackwards(node->children, i, node->key_count);
+                    node->key_count--;
+                    return node;
                 }
-                ShiftKeysArrBackwards(node->keys, i, node->key_count);
-                ShiftChildrenArrBackwards(node->children, i, node->key_count);
-                node->key_count--;
-                return node;
             }
         }
 
-        if (node->children[i]) {
-            node->children[i] = DeleteFromSubtree(node->children[i], value);
-        } else {
+        if (!node->children[i]) {
             std::println("{} doesn't exist in the tree.", value);
+        } else {
+            node->children[i] = DeleteFromSubtree(node->children[i], value);
         }
         return node;
     }
