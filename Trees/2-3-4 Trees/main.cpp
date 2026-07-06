@@ -1,4 +1,3 @@
-
 #include "twothreefour.hpp"
 #include <array>
 #include <print>
@@ -14,25 +13,14 @@ int main()
         t.insert(x);
     }
 
-    t.Delete(63);
-    t.Delete(64);
-    t.Delete(62);
-    t.Delete(61);
-    t.Delete(60);
-    t.Delete(65);
-    t.print();
-    t.Delete(66);
-    t.print();
-    t.Delete(67);
-    t.print();
-    // t.Delete(68);
-    // t.print();
+    std::array<int, 11> delete_vals = { 63, 64, 62, 61, 60, 65, 66, 67, 68, 69, 70 };
 
-    // t.Delete(69);
-    // t.print();
-
-    // t.Delete(70);
-    // t.print();
-
+    for (std::size_t i {0} ; i < 1 ; i++) {
+        std::println("Deleting Value : {}\n pre-delete : ", delete_vals[i]);
+        t.print();
+        t.Delete(delete_vals[i]);
+	std::println("Post Delete");
+	t.print();
+    }
     return 0;
 }
