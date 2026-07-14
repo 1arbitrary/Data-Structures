@@ -15,8 +15,8 @@ private:
 
 public:
     std::size_t key_count = 0;
-    std::array<T, keys_arr_size> keys {};
-    std::array<Node<T>*, keys_arr_size + 1> children {};
+    std::array<T, keys_arr_size> keys { };
+    std::array<Node<T>*, keys_arr_size + 1> children { };
 };
 
 template <typename T>
@@ -73,7 +73,7 @@ private:
 
     void ShiftChildrenArrBackwards(std::array<Node<T>*, 4>& arr, Size begin, Size end)
     {
-        for (Size i { begin }; i < (end - 1); i++) {
+        for (Size i { begin }; i < end; i++) {
             arr[i] = arr[i + 1];
         }
     }
@@ -115,28 +115,24 @@ private:
     Node<T>* FindSmallestNodeParent(Node<T>* node, Size& idx)
     {
         Node<T>* sm_nd_prt = node;
-        if (node->children[1]->children[0]) {
-            sm_nd_prt = sm_nd_prt->children[idx];
-        } else if (!sm_nd_prt->children[1]->children[0]) {
+        if (!(sm_nd_prt->children[1]->children[0])) {
             idx++;
             return sm_nd_prt;
         }
 
-        while (sm_nd_prt->children[0]->children[0]) {
+        sm_nd_prt = sm_nd_prt->children[1];
+        while ((sm_nd_prt->children[0])->children[0]) {
             sm_nd_prt = sm_nd_prt->children[0];
         }
         return sm_nd_prt;
     }
 
-    Node<T>* GetExistingSingleChild(std::array<Node<T>*, 4>& arr, std::size_t i)
+    std::size_t GetExistingChildIdx(std::array<Node<T>*, 4>& arr, std::size_t idx)
     {
-        if ((arr[i]) && !(arr[i + 1])) {
-            return arr[i];
-        } else {
-            i++;
-            return arr[i + 1];
+        if ((arr[idx]) && !(arr[idx + 1])) {
+            return idx;
         }
-        return nullptr;
+        return ++idx;
     }
 
     Node<T>* DeleteFromSubtree(Node<T>* node, const T& value)
@@ -144,16 +140,20 @@ private:
         assert(node);
 
         std::size_t i { 0 };
-        std::strong_ordering cmp = std::strong_ordering::less; // default value
-        while (i < node->key_count) {
+        std::strong_ordering cmp = std::strong_ordering::less;
+        while (true) {
             cmp = value <=> node->keys[i];
+            if (cmp == std::strong_ordering::equal) {
+                break;
+            }
+
             if (cmp == std::strong_ordering::greater) {
                 i++;
-            } else if (cmp == std::strong_ordering::less) {
+            }
+          
+            if (i == node->key_count || cmp == std::strong_ordering::less) {
                 node->children[i] = DeleteFromSubtree(node->children[i], value);
                 return node;
-            } else {
-                break;
             }
         }
 
@@ -176,20 +176,23 @@ private:
 
                 if (leaf_key) {
                     ShiftKeysArrBackwards(node->keys, i, node->key_count);
+                    ShiftChildrenArrBackwards(node->children, i, node->key_count);
                     node->key_count--;
                     return node;
                 }
 
                 if (single_child) {
-                    Node<T>* existing_child = GetExistingSingleChild(node->children, i);
-                    node->keys[i] = existing_child->keys[0];
-                    ShiftKeysArrBackwards(node->children[i]->keys, i, node->children[i]->key_count);
-                    node->children[i]->key_count--;
+                    std::size_t j { GetExistingChildIdx(node->children, i) };
+                    node->keys[i] = node->children[j]->keys[0];
+                    node->children[j]
+                        = DeleteFromSubtree(node->children[j], node->children[j]->keys[0]);
                     return node;
                 } else if (multiple_children) {
-                    Node<T>* min = FindSmallestNodeParent(node, i);
-                    node->keys[i] = (min->children[i])->keys[0];
-                    min->children[i] = DeleteFromSubtree(min, min->children[i]->keys[0]);
+                    Size j = i;
+                    Node<T>* min = FindSmallestNodeParent(node, j);
+                    node->keys[i] = (min->children[j])->keys[0];
+                    min->children[j]
+                        = DeleteFromSubtree(min->children[j], min->children[j]->keys[0]);
                     return node;
                 }
             }
