@@ -1,6 +1,6 @@
 [
   {
-    "directory": "/home/dot/Documents/Data-Structures/Trees/2-3-4 Trees/",
+    "directory": "/home/dot/Documents/Data-Structures/Trees/2-3-4 Trees/top_down",
     "command": "g++ main.cpp -std=c++23 -Wall -Wextra -Wpedantic -fsanitize=address,leak,undefined -fno-omit-frame-pointer -O0 -g3 -ggdb",
     "file": "main.cpp"
   }
