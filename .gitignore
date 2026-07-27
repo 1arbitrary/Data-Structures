@@ -1,1 +1,33 @@
-output
+# Compilation database
+compile_commands.json
+
+# Build directories
+build/
+cmake-build-*/
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Object files
+*.o
+*.obj
+
+# Libraries
+*.a
+*.so
+*.dll
+*.dylib
+
+# Executables
+*.exe
+*.out
+
+# Debuggers
+*.dSYM/
+
+# Editors
+.vscode/
+.idea/
