@@ -1,7 +1,7 @@
 BasedOnStyle: Webkit
 Language: Cpp
-IndentWidth: 4
-ColumnLimit: 100
+IndentWidth: 2
+ColumnLimit: 120
 PointerAlignment: Left
 DerivePointerAlignment: false
 SortIncludes: true
