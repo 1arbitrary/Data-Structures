@@ -13,7 +13,7 @@ int main()
   }
 
   std::array<int, 18> delete_vals { 25, 175, 50, 150, 60, 125, 61, 100, 62, 75, 63, 70, 64, 69, 65, 68, 66, 67 };
-
+  
   for (std::size_t i { 0 }; i < 18; i++) {
     std::println("Deleting Value : {}\n pre-delete : ", delete_vals[i]);
     t.print();
